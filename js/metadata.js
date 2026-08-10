@@ -3,6 +3,11 @@ const SITES = [
   { id: 'thingiverse', name: 'Thingiverse', pattern: /thingiverse\.com/i },
   { id: 'makerworld', name: 'MakerWorld', pattern: /makerworld\.com/i },
   { id: 'thangs', name: 'Thangs', pattern: /thangs\.com/i },
+  { id: 'crealitycloud', name: 'Creality Cloud', pattern: /crealitycloud\.com/i },
+  { id: 'cults3d', name: 'Cults3D', pattern: /cults3d\.com/i },
+  { id: 'myminifactory', name: 'MyMiniFactory', pattern: /myminifactory\.com/i },
+  { id: 'yeggi', name: 'Yeggi', pattern: /yeggi\.com/i },
+  { id: 'sketchfab', name: 'Sketchfab', pattern: /sketchfab\.com/i },
 ];
 
 export function detectSource(url) {
@@ -28,8 +33,9 @@ function parseTitleTag(html) {
 }
 
 function cleanTitle(title, sourceName) {
+  const siteNames = SITES.map((s) => s.name.replace(/\s+/g, '\\s*')).join('|');
   let cleaned = title
-    .replace(/\s*[-|–—]\s*(Printables|Thingiverse|MakerWorld|Thangs).*$/i, '')
+    .replace(new RegExp(`\\s*[-|–—]\\s*(${siteNames}).*$`, 'i'), '')
     .replace(/\s*[-|–—]\s*3D\s*print.*$/i, '')
     .trim();
   if (!cleaned || cleaned.toLowerCase() === sourceName.toLowerCase()) {
