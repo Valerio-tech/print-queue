@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#1a73e8">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Print Queue</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-top">
+      <h1>Print Queue</h1>
+      <div class="header-actions">
+        <button id="export-btn" class="icon-btn" title="Esporta backup" aria-label="Esporta">↓</button>
+        <button id="import-btn" class="icon-btn" title="Importa backup" aria-label="Importa">↑</button>
+        <input type="file" id="import-file" accept=".json" hidden>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <input type="search" id="search-input" placeholder="Cerca modelli…" autocomplete="off">
+    </div>
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="todo">Da stampare (<span id="count-todo">0</span>)</button>
+      <button class="filter-btn" data-filter="done">Stampati (<span id="count-done">0</span>)</button>
+      <button class="filter-btn" data-filter="all">Tutti</button>
+    </div>
+    <div id="tag-filters" class="tag-filters"></div>
+  </header>
+
+  <main class="main">
+    <div id="empty-state" class="empty hidden">
+      <div class="empty-icon">🖨️</div>
+      <p>Nessun modello ancora</p>
+      <p class="empty-hint">Tocca + per aggiungere un link da Printables, Thingiverse, MakerWorld o Thangs</p>
+    </div>
+    <div id="project-list" class="project-list"></div>
+  </main>
+
+  <button id="fab-add" class="fab" aria-label="Aggiungi modello">+</button>
+
+  <div id="overlay" class="overlay"></div>
+
+  <section id="add-sheet" class="bottom-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <h2>Nuovo modello</h2>
+      <button id="close-add" class="icon-btn" aria-label="Chiudi">✕</button>
+    </div>
+    <form id="add-form" class="add-form">
+      <label for="url-input">Link al modello</label>
+      <input type="url" id="url-input" placeholder="https://www.printables.com/model/…" required inputmode="url" autocomplete="off">
+      <label for="tags-input">Tag (opzionale)</label>
+      <input type="text" id="tags-input" placeholder="vase, regalo, decorazione" autocomplete="off">
+      <p class="hint">Separa i tag con virgola</p>
+      <p id="add-status" class="add-status"></p>
+      <button type="submit" id="add-btn" class="btn-primary">Salva</button>
+    </form>
+  </section>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
