@@ -31,7 +31,19 @@
       <button class="filter-btn" data-filter="done">Stampati (<span id="count-done">0</span>)</button>
       <button class="filter-btn" data-filter="all">Tutti</button>
     </div>
-    <div id="tag-filters" class="tag-filters"></div>
+    <div id="tag-filter-wrap" class="tag-filter-wrap hidden">
+      <div class="tag-dropdown-wrap">
+        <button type="button" id="tag-filter-btn" class="tag-filter-btn" aria-haspopup="listbox" aria-expanded="false">
+          <span id="tag-filter-label">Tutti i tag</span>
+          <span class="tag-filter-chevron" aria-hidden="true">▼</span>
+        </button>
+        <div id="tag-filter-menu" class="tag-dropdown-menu hidden" role="listbox" aria-label="Filtra per tag">
+          <hr class="tag-dropdown-divider">
+          <div id="tag-filter-options" class="tag-dropdown-options"></div>
+          <hr class="tag-dropdown-divider">
+        </div>
+      </div>
+    </div>
   </header>
 
   <main class="main">
@@ -56,9 +68,18 @@
     <form id="add-form" class="add-form">
       <label for="url-input">Link al modello</label>
       <input type="url" id="url-input" placeholder="https://www.printables.com/model/…" required inputmode="url" autocomplete="off">
+      <label for="title-input">Titolo</label>
+      <input type="text" id="title-input" placeholder="Nome del modello nella lista" required autocomplete="off">
       <label for="tags-input">Tag (opzionale)</label>
-      <input type="text" id="tags-input" placeholder="vase, regalo, decorazione" autocomplete="off">
-      <p class="hint">Separa i tag con virgola</p>
+      <div class="tag-input-wrap">
+        <input type="text" id="tags-input" placeholder="vase, regalo, decorazione" autocomplete="off">
+        <div id="tag-suggestions" class="tag-dropdown-menu hidden" role="listbox" aria-label="Tag esistenti">
+          <hr class="tag-dropdown-divider">
+          <div id="tag-suggestions-list" class="tag-dropdown-options"></div>
+          <hr class="tag-dropdown-divider">
+        </div>
+      </div>
+      <p class="hint">Separa i tag con virgola, o scegli da quelli già usati</p>
       <p id="add-status" class="add-status"></p>
       <button type="submit" id="add-btn" class="btn-primary">Salva</button>
     </form>

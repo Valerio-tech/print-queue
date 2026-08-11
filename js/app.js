@@ -8,18 +8,27 @@ let projects = loadProjects();
 let filter = 'todo';
 let activeTag = '';
 let searchQuery = '';
+let tagFilterOpen = false;
+let tagSuggestionsOpen = false;
 
 const els = {
   list: $('#project-list'),
   empty: $('#empty-state'),
   countTodo: $('#count-todo'),
   countDone: $('#count-done'),
-  tagFilters: $('#tag-filters'),
+  tagFilterWrap: $('#tag-filter-wrap'),
+  tagFilterBtn: $('#tag-filter-btn'),
+  tagFilterLabel: $('#tag-filter-label'),
+  tagFilterMenu: $('#tag-filter-menu'),
+  tagFilterOptions: $('#tag-filter-options'),
   search: $('#search-input'),
   addSheet: $('#add-sheet'),
   addForm: $('#add-form'),
   urlInput: $('#url-input'),
+  titleInput: $('#title-input'),
   tagsInput: $('#tags-input'),
+  tagSuggestions: $('#tag-suggestions'),
+  tagSuggestionsList: $('#tag-suggestions-list'),
   addStatus: $('#add-status'),
   addBtn: $('#add-btn'),
   fab: $('#fab-add'),
@@ -53,6 +62,31 @@ function bindEvents() {
 
   els.addForm.addEventListener('submit', handleAdd);
 
+  els.tagsInput.addEventListener('focus', () => {
+    tagSuggestionsOpen = true;
+    renderTagSuggestions();
+  });
+
+  els.tagsInput.addEventListener('input', renderTagSuggestions);
+
+  els.tagsInput.addEventListener('blur', () => {
+    setTimeout(() => {
+      tagSuggestionsOpen = false;
+      els.tagSuggestions.classList.add('hidden');
+    }, 200);
+  });
+
+  els.tagFilterBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleTagFilterMenu();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!els.tagFilterWrap.contains(e.target)) {
+      closeTagFilterMenu();
+    }
+  });
+
   $('#export-btn').addEventListener('click', handleExport);
   $('#import-btn').addEventListener('click', () => els.importFile.click());
   els.importFile.addEventListener('change', handleImport);
@@ -62,21 +96,33 @@ function openAddSheet() {
   els.addSheet.classList.add('open');
   els.overlay.classList.add('visible');
   els.urlInput.value = '';
+  els.titleInput.value = '';
   els.tagsInput.value = '';
   els.addStatus.textContent = '';
   els.addStatus.className = 'add-status';
+  els.tagSuggestions.classList.add('hidden');
+  tagSuggestionsOpen = false;
   setTimeout(() => els.urlInput.focus(), 300);
 }
 
 function closeAddSheet() {
   els.addSheet.classList.remove('open');
   els.overlay.classList.remove('visible');
+  els.tagSuggestions.classList.add('hidden');
+  tagSuggestionsOpen = false;
 }
 
 async function handleAdd(e) {
   e.preventDefault();
   const url = els.urlInput.value.trim();
+  const title = els.titleInput.value.trim();
   if (!url) return;
+
+  if (!title) {
+    showAddStatus('Inserisci un titolo', 'error');
+    els.titleInput.focus();
+    return;
+  }
 
   try {
     new URL(url);
@@ -86,14 +132,14 @@ async function handleAdd(e) {
   }
 
   els.addBtn.disabled = true;
-  showAddStatus('Recupero info dal link…', 'loading');
+  showAddStatus('Recupero immagine dal link…', 'loading');
 
   const tags = parseTags(els.tagsInput.value);
   const meta = await fetchMetadata(url);
 
   const project = createProject({
     url,
-    title: meta.title,
+    title,
     image: meta.image,
     source: meta.source,
     tags,
@@ -132,32 +178,101 @@ function render() {
   els.countTodo.textContent = todoCount;
   els.countDone.textContent = doneCount;
 
-  renderTagFilters();
+  renderTagFilterDropdown();
   renderList(filtered);
 }
 
-function renderTagFilters() {
-  const tags = getAllTags(projects);
-  if (tags.length === 0) {
-    els.tagFilters.innerHTML = '';
+function getSuggestionFilter() {
+  const raw = els.tagsInput.value;
+  if (/[,;#]\s*$/.test(raw)) {
+    return { current: '', existing: parseTags(raw) };
+  }
+  const parts = raw.split(/[,;#]+/);
+  const current = (parts.pop() || '').trim().toLowerCase();
+  const existing = parseTags(parts.join(','));
+  return { current, existing };
+}
+
+function renderTagSuggestions() {
+  if (!tagSuggestionsOpen) return;
+
+  const allTags = getAllTags(projects);
+  const { current, existing } = getSuggestionFilter();
+
+  const available = allTags.filter(
+    (tag) => !existing.includes(tag) && (!current || tag.includes(current))
+  );
+
+  if (available.length === 0) {
+    els.tagSuggestions.classList.add('hidden');
     return;
   }
 
-  const chips = tags
+  els.tagSuggestionsList.innerHTML = available
     .map(
       (tag) =>
-        `<button class="tag-chip ${activeTag === tag ? 'active' : ''}" data-tag="${escapeAttr(tag)}">${escapeHtml(tag)}</button>`
+        `<button type="button" class="tag-dropdown-item" data-tag="${escapeAttr(tag)}">${escapeHtml(tag)}</button>`
     )
     .join('');
 
-  els.tagFilters.innerHTML = `
-    <button class="tag-chip ${activeTag === '' ? 'active' : ''}" data-tag="">Tutti</button>
-    ${chips}
-  `;
+  els.tagSuggestionsList.querySelectorAll('.tag-dropdown-item').forEach((btn) => {
+    btn.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      appendTagToInput(btn.dataset.tag);
+      renderTagSuggestions();
+    });
+  });
 
-  els.tagFilters.querySelectorAll('.tag-chip').forEach((chip) => {
-    chip.addEventListener('click', () => {
-      activeTag = chip.dataset.tag;
+  els.tagSuggestions.classList.remove('hidden');
+}
+
+function appendTagToInput(tag) {
+  const { existing } = getSuggestionFilter();
+  const merged = [...new Set([...existing, tag])];
+  els.tagsInput.value = `${merged.join(', ')}, `;
+  els.tagsInput.focus();
+}
+
+function toggleTagFilterMenu() {
+  tagFilterOpen = !tagFilterOpen;
+  els.tagFilterMenu.classList.toggle('hidden', !tagFilterOpen);
+  els.tagFilterBtn.setAttribute('aria-expanded', String(tagFilterOpen));
+}
+
+function closeTagFilterMenu() {
+  tagFilterOpen = false;
+  els.tagFilterMenu.classList.add('hidden');
+  els.tagFilterBtn.setAttribute('aria-expanded', 'false');
+}
+
+function renderTagFilterDropdown() {
+  const tags = getAllTags(projects);
+
+  if (tags.length === 0) {
+    els.tagFilterWrap.classList.add('hidden');
+    closeTagFilterMenu();
+    return;
+  }
+
+  els.tagFilterWrap.classList.remove('hidden');
+  els.tagFilterLabel.textContent = activeTag || 'Tutti i tag';
+
+  const options = [
+    { tag: '', label: 'Tutti i tag' },
+    ...tags.map((tag) => ({ tag, label: tag })),
+  ];
+
+  els.tagFilterOptions.innerHTML = options
+    .map(
+      ({ tag, label }) =>
+        `<button type="button" class="tag-dropdown-item ${activeTag === tag ? 'active' : ''}" data-tag="${escapeAttr(tag)}">${escapeHtml(label)}</button>`
+    )
+    .join('');
+
+  els.tagFilterOptions.querySelectorAll('.tag-dropdown-item').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      activeTag = btn.dataset.tag;
+      closeTagFilterMenu();
       render();
     });
   });

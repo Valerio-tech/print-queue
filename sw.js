@@ -1,4 +1,4 @@
-const CACHE = 'print-queue-v2';
+const CACHE = 'print-queue-v3';
 const ASSETS = [
   './',
   './index.html',
