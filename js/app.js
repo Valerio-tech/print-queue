@@ -35,6 +35,7 @@ const els = {
   fab: $('#fab-add'),
   overlay: $('#overlay'),
   importFile: $('#import-file'),
+  toast: $('#toast'),
 };
 
 function init() {
@@ -313,6 +314,11 @@ function renderCard(p) {
 
   return `
     <article class="card ${p.printed ? 'printed' : ''}" data-id="${p.id}">
+      <button type="button" class="card-share-btn" data-action="share" aria-label="Condividi link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 16V4m0 0l-4 4m4-4l4 4M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
       <a href="${escapeAttr(p.url)}" target="_blank" rel="noopener" class="card-link">
         <div class="card-img card-source-icon" data-source="${escapeAttr(source.id)}">
           <img src="${escapeAttr(iconSrc)}" alt="${escapeAttr(source.name)}" loading="lazy" onerror="this.parentElement.classList.add('no-img')">
@@ -338,6 +344,11 @@ function handleAction(id, action) {
   const idx = projects.findIndex((p) => p.id === id);
   if (idx === -1) return;
 
+  if (action === 'share') {
+    shareProject(projects[idx]);
+    return;
+  }
+
   if (action === 'toggle') {
     projects[idx].printed = !projects[idx].printed;
     projects[idx].printedAt = projects[idx].printed ? Date.now() : null;
@@ -348,6 +359,39 @@ function handleAction(id, action) {
 
   saveProjects(projects);
   render();
+}
+
+async function shareProject(project) {
+  const shareData = {
+    title: project.title,
+    text: project.title,
+    url: project.url,
+  };
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      return;
+    } catch (err) {
+      if (err?.name === 'AbortError') return;
+    }
+  }
+
+  try {
+    await navigator.clipboard.writeText(project.url);
+    showToast('Link copiato');
+  } catch {
+    showToast(project.url);
+  }
+}
+
+function showToast(message) {
+  els.toast.textContent = message;
+  els.toast.classList.remove('hidden');
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(() => {
+    els.toast.classList.add('hidden');
+  }, 2200);
 }
 
 function handleExport() {

@@ -11,11 +11,11 @@ const SITES = [
 ];
 
 const SOURCE_ICONS = {
-  printables: './icons/sources/printables.svg',
-  thingiverse: './icons/sources/thingiverse.svg',
-  makerworld: './icons/sources/makerworld.svg',
-  thangs: './icons/sources/thangs.svg',
-  crealitycloud: './icons/sources/crealitycloud.svg',
+  printables: './icons/sources/printables.png',
+  thingiverse: './icons/sources/thingiverse.png',
+  makerworld: './icons/sources/makerworld.png',
+  thangs: './icons/sources/thangs.png',
+  crealitycloud: './icons/sources/crealitycloud.png',
   cults3d: './icons/sources/cults3d.svg',
   myminifactory: './icons/sources/myminifactory.svg',
   yeggi: './icons/sources/yeggi.svg',

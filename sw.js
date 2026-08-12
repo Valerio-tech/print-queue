@@ -1,4 +1,4 @@
-const CACHE = 'print-queue-v4';
+const CACHE = 'print-queue-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -9,11 +9,11 @@ const ASSETS = [
   './js/metadata.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
-  './icons/sources/printables.svg',
-  './icons/sources/thingiverse.svg',
-  './icons/sources/makerworld.svg',
-  './icons/sources/thangs.svg',
-  './icons/sources/crealitycloud.svg',
+  './icons/sources/printables.png',
+  './icons/sources/thingiverse.png',
+  './icons/sources/makerworld.png',
+  './icons/sources/thangs.png',
+  './icons/sources/crealitycloud.png',
   './icons/sources/cults3d.svg',
   './icons/sources/myminifactory.svg',
   './icons/sources/yeggi.svg',
