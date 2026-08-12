@@ -10,83 +10,26 @@ const SITES = [
   { id: 'sketchfab', name: 'Sketchfab', pattern: /sketchfab\.com/i },
 ];
 
+const SOURCE_ICONS = {
+  printables: './icons/sources/printables.svg',
+  thingiverse: './icons/sources/thingiverse.svg',
+  makerworld: './icons/sources/makerworld.svg',
+  thangs: './icons/sources/thangs.svg',
+  crealitycloud: './icons/sources/crealitycloud.svg',
+  cults3d: './icons/sources/cults3d.svg',
+  myminifactory: './icons/sources/myminifactory.svg',
+  yeggi: './icons/sources/yeggi.svg',
+  sketchfab: './icons/sources/sketchfab.svg',
+  other: './icons/sources/other.svg',
+};
+
 export function detectSource(url) {
   const site = SITES.find((s) => s.pattern.test(url));
   return site ? { id: site.id, name: site.name } : { id: 'other', name: 'Altro' };
 }
 
-function parseOgTag(html, property) {
-  const regex = new RegExp(
-    `<meta[^>]+property=["']${property}["'][^>]+content=["']([^"']+)["']`,
-    'i'
-  );
-  const alt = new RegExp(
-    `<meta[^>]+content=["']([^"']+)["'][^>]+property=["']${property}["']`,
-    'i'
-  );
-  return regex.exec(html)?.[1] || alt.exec(html)?.[1] || '';
-}
-
-function parseTitleTag(html) {
-  const match = html.match(/<title[^>]*>([^<]+)<\/title>/i);
-  return match ? match[1].trim() : '';
-}
-
-function cleanTitle(title, sourceName) {
-  const siteNames = SITES.map((s) => s.name.replace(/\s+/g, '\\s*')).join('|');
-  let cleaned = title
-    .replace(new RegExp(`\\s*[-|–—]\\s*(${siteNames}).*$`, 'i'), '')
-    .replace(/\s*[-|–—]\s*3D\s*print.*$/i, '')
-    .trim();
-  if (!cleaned || cleaned.toLowerCase() === sourceName.toLowerCase()) {
-    return '';
-  }
-  return cleaned;
-}
-
-async function fetchHtml(url) {
-  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 12000);
-
-  try {
-    const res = await fetch(proxyUrl, { signal: controller.signal });
-    if (!res.ok) throw new Error('Fetch failed');
-    return await res.text();
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-
-export async function fetchMetadata(url) {
-  const source = detectSource(url);
-  const fallback = {
-    title: '',
-    image: '',
-    source: source.id,
-    sourceName: source.name,
-  };
-
-  try {
-    const html = await fetchHtml(url);
-    const ogTitle = parseOgTag(html, 'og:title');
-    const ogImage = parseOgTag(html, 'og:image');
-    const pageTitle = parseTitleTag(html);
-
-    const title = cleanTitle(ogTitle || pageTitle, source.name);
-
-    return {
-      title: title || `Modello da ${source.name}`,
-      image: ogImage,
-      source: source.id,
-      sourceName: source.name,
-    };
-  } catch {
-    return {
-      ...fallback,
-      title: fallback.title || `Modello da ${source.name}`,
-    };
-  }
+export function getSourceIcon(sourceId) {
+  return SOURCE_ICONS[sourceId] || SOURCE_ICONS.other;
 }
 
 export function parseTags(input) {

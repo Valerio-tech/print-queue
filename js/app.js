@@ -1,5 +1,5 @@
 import { loadProjects, saveProjects, createProject, exportData, importData } from './storage.js';
-import { fetchMetadata, parseTags, getAllTags, detectSource } from './metadata.js';
+import { parseTags, getAllTags, detectSource, getSourceIcon } from './metadata.js';
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
@@ -12,6 +12,7 @@ let tagFilterOpen = false;
 let tagSuggestionsOpen = false;
 
 const els = {
+  header: $('.header'),
   list: $('#project-list'),
   empty: $('#empty-state'),
   countTodo: $('#count-todo'),
@@ -90,6 +91,13 @@ function bindEvents() {
   $('#export-btn').addEventListener('click', handleExport);
   $('#import-btn').addEventListener('click', () => els.importFile.click());
   els.importFile.addEventListener('change', handleImport);
+
+  window.addEventListener('scroll', handleHeaderScroll, { passive: true });
+  handleHeaderScroll();
+}
+
+function handleHeaderScroll() {
+  els.header.classList.toggle('header-scrolled', window.scrollY > 16);
 }
 
 function openAddSheet() {
@@ -131,17 +139,13 @@ async function handleAdd(e) {
     return;
   }
 
-  els.addBtn.disabled = true;
-  showAddStatus('Recupero immagine dal link…', 'loading');
-
   const tags = parseTags(els.tagsInput.value);
-  const meta = await fetchMetadata(url);
+  const source = detectSource(url);
 
   const project = createProject({
     url,
     title,
-    image: meta.image,
-    source: meta.source,
+    source: source.id,
     tags,
   });
 
@@ -149,7 +153,6 @@ async function handleAdd(e) {
   saveProjects(projects);
   closeAddSheet();
   render();
-  els.addBtn.disabled = false;
 }
 
 function showAddStatus(msg, type) {
@@ -301,9 +304,8 @@ function renderList(items) {
 
 function renderCard(p) {
   const source = detectSource(p.url);
-  const img = p.image
-    ? `<img src="${escapeAttr(p.image)}" alt="" loading="lazy" onerror="this.parentElement.classList.add('no-img')">`
-    : '';
+  const iconSrc = getSourceIcon(source.id);
+  const initials = source.name.slice(0, 2).toUpperCase();
   const tags =
     p.tags.length > 0
       ? p.tags.map((t) => `<span class="card-tag">${escapeHtml(t)}</span>`).join('')
@@ -312,7 +314,10 @@ function renderCard(p) {
   return `
     <article class="card ${p.printed ? 'printed' : ''}" data-id="${p.id}">
       <a href="${escapeAttr(p.url)}" target="_blank" rel="noopener" class="card-link">
-        <div class="card-img">${img}<span class="card-img-fallback">3D</span></div>
+        <div class="card-img card-source-icon" data-source="${escapeAttr(source.id)}">
+          <img src="${escapeAttr(iconSrc)}" alt="${escapeAttr(source.name)}" loading="lazy" onerror="this.parentElement.classList.add('no-img')">
+          <span class="card-img-fallback">${escapeHtml(initials)}</span>
+        </div>
         <div class="card-body">
           <span class="card-source">${escapeHtml(source.name)}</span>
           <h2 class="card-title">${escapeHtml(p.title)}</h2>

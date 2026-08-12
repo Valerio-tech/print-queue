@@ -1,4 +1,4 @@
-const CACHE = 'print-queue-v3';
+const CACHE = 'print-queue-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -9,6 +9,16 @@ const ASSETS = [
   './js/metadata.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
+  './icons/sources/printables.svg',
+  './icons/sources/thingiverse.svg',
+  './icons/sources/makerworld.svg',
+  './icons/sources/thangs.svg',
+  './icons/sources/crealitycloud.svg',
+  './icons/sources/cults3d.svg',
+  './icons/sources/myminifactory.svg',
+  './icons/sources/yeggi.svg',
+  './icons/sources/sketchfab.svg',
+  './icons/sources/other.svg',
 ];
 
 self.addEventListener('install', (e) => {
