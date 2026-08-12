@@ -316,7 +316,10 @@ function renderCard(p) {
     <article class="card ${p.printed ? 'printed' : ''}" data-id="${p.id}">
       <button type="button" class="card-share-btn" data-action="share" aria-label="Condividi link">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 16V4m0 0l-4 4m4-4l4 4M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="6" cy="12" r="2.25" stroke="currentColor" stroke-width="1.75"/>
+          <circle cx="18" cy="6" r="2.25" stroke="currentColor" stroke-width="1.75"/>
+          <circle cx="18" cy="18" r="2.25" stroke="currentColor" stroke-width="1.75"/>
+          <path d="M8.2 11.2l7.1-3.8M8.2 12.8l7.1 3.8" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
         </svg>
       </button>
       <a href="${escapeAttr(p.url)}" target="_blank" rel="noopener" class="card-link">

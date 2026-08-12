@@ -312,19 +312,21 @@ body {
   height: 72px;
   flex-shrink: 0;
   border-radius: 8px;
-  background: var(--surface-2);
+  background: #fff;
   overflow: hidden;
   position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
 }
 
 .card-source-icon img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
 }
 
 .card-img-fallback {
