@@ -19,29 +19,16 @@ function hslToHex(h, s, l) {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
 }
 
-const GRAY_ROW = [
-  '#FFFFFF',
-  '#EBEBEB',
-  '#D6D6D6',
-  '#C2C2C2',
-  '#ADADAD',
-  '#999999',
-  '#858585',
-  '#707070',
-  '#5C5C5C',
-  '#474747',
-  '#333333',
-  '#000000',
-];
-
-const HUES = [210, 225, 240, 255, 270, 285, 300, 315, 330, 345, 0, 15];
-const LIGHTNESS = [78, 66, 54, 42, 34, 26, 18];
+// 12 fundamental hues: Rosso → Rosso-Viola
+const HUES = [0, 15, 30, 45, 55, 90, 120, 180, 220, 255, 280, 320];
+const LIGHTNESS = [80, 62, 46, 30];
+const SATURATION = 90;
 
 function buildPalette() {
-  const colors = [...GRAY_ROW];
+  const colors = [];
   for (const lightness of LIGHTNESS) {
     for (const hue of HUES) {
-      colors.push(hslToHex(hue, 82, lightness));
+      colors.push(hslToHex(hue, SATURATION, lightness));
     }
   }
   return colors;

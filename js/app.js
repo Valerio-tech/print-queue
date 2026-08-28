@@ -47,6 +47,7 @@ const els = {
 function init() {
   bindEvents();
   buildColorGrid();
+  setSelectedColor(DEFAULT_COLOR);
   render();
   registerServiceWorker();
 }
