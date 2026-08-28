@@ -1,5 +1,6 @@
 import { loadProjects, saveProjects, createProject, exportData, importData } from './storage.js';
 import { parseTags, getAllTags, detectSource, getSourceIcon } from './metadata.js';
+import { COLOR_PALETTE, DEFAULT_COLOR, normalizeColor } from './color-picker.js';
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
@@ -10,6 +11,7 @@ let activeTag = '';
 let searchQuery = '';
 let tagFilterOpen = false;
 let tagSuggestionsOpen = false;
+let selectedColor = DEFAULT_COLOR;
 
 const els = {
   header: $('.header'),
@@ -27,6 +29,10 @@ const els = {
   addForm: $('#add-form'),
   urlInput: $('#url-input'),
   titleInput: $('#title-input'),
+  colorInput: $('#color-input'),
+  colorGrid: $('#color-grid'),
+  colorPreview: $('#color-preview'),
+  colorHex: $('#color-hex'),
   tagsInput: $('#tags-input'),
   tagSuggestions: $('#tag-suggestions'),
   tagSuggestionsList: $('#tag-suggestions-list'),
@@ -40,6 +46,7 @@ const els = {
 
 function init() {
   bindEvents();
+  buildColorGrid();
   render();
   registerServiceWorker();
 }
@@ -101,12 +108,37 @@ function handleHeaderScroll() {
   els.header.classList.toggle('header-scrolled', window.scrollY > 16);
 }
 
+function buildColorGrid() {
+  els.colorGrid.innerHTML = COLOR_PALETTE.map(
+    (color) =>
+      `<button type="button" class="color-swatch${color === selectedColor ? ' selected' : ''}" data-color="${color}" style="background:${color}" aria-label="${color}" role="option" aria-selected="${color === selectedColor}"></button>`
+  ).join('');
+
+  els.colorGrid.querySelectorAll('.color-swatch').forEach((btn) => {
+    btn.addEventListener('click', () => setSelectedColor(btn.dataset.color));
+  });
+}
+
+function setSelectedColor(color) {
+  selectedColor = normalizeColor(color);
+  els.colorInput.value = selectedColor;
+  els.colorPreview.style.background = selectedColor;
+  els.colorHex.textContent = selectedColor;
+
+  els.colorGrid.querySelectorAll('.color-swatch').forEach((btn) => {
+    const active = btn.dataset.color === selectedColor;
+    btn.classList.toggle('selected', active);
+    btn.setAttribute('aria-selected', String(active));
+  });
+}
+
 function openAddSheet() {
   els.addSheet.classList.add('open');
   els.overlay.classList.add('visible');
   els.urlInput.value = '';
   els.titleInput.value = '';
   els.tagsInput.value = '';
+  setSelectedColor(DEFAULT_COLOR);
   els.addStatus.textContent = '';
   els.addStatus.className = 'add-status';
   els.tagSuggestions.classList.add('hidden');
@@ -147,6 +179,7 @@ async function handleAdd(e) {
     url,
     title,
     source: source.id,
+    color: selectedColor,
     tags,
   });
 
@@ -311,9 +344,11 @@ function renderCard(p) {
     p.tags.length > 0
       ? p.tags.map((t) => `<span class="card-tag">${escapeHtml(t)}</span>`).join('')
       : '';
+  const cardColor = p.color ? normalizeColor(p.color) : '';
+  const cardStyle = cardColor ? ` style="--card-border: ${escapeAttr(cardColor)}"` : '';
 
   return `
-    <article class="card ${p.printed ? 'printed' : ''}" data-id="${p.id}">
+    <article class="card ${p.printed ? 'printed' : ''}" data-id="${p.id}"${cardStyle}>
       <button type="button" class="card-share-btn" data-action="share" aria-label="Condividi link">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <circle cx="6" cy="12" r="2.25" stroke="currentColor" stroke-width="1.75"/>

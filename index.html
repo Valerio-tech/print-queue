@@ -73,6 +73,15 @@
       <input type="url" id="url-input" placeholder="https://www.printables.com/model/…" required inputmode="url" autocomplete="off">
       <label for="title-input">Titolo</label>
       <input type="text" id="title-input" placeholder="Nome del modello nella lista" required autocomplete="off">
+      <label>Colore</label>
+      <div id="color-picker" class="color-picker">
+        <div class="color-preview-row">
+          <div id="color-preview" class="color-preview-swatch" aria-hidden="true"></div>
+          <span id="color-hex" class="color-hex">#FFFFFF</span>
+        </div>
+        <div id="color-grid" class="color-grid" role="listbox" aria-label="Scegli colore"></div>
+      </div>
+      <input type="hidden" id="color-input" value="#FFFFFF">
       <label for="tags-input">Tag (opzionale)</label>
       <div class="tag-input-wrap">
         <input type="text" id="tags-input" placeholder="vase, regalo, decorazione" autocomplete="off">

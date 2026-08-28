@@ -6,6 +6,7 @@ App personale per salvare e organizzare modelli 3D da stampare. Pensata per **An
 
 - Incolla un link da **Printables**, **Thingiverse**, **MakerWorld**, **Thangs**, **Creality Cloud**, **Cults3D**, **MyMiniFactory**, **Yeggi** o **Sketchfab**
 - Assegna un **titolo** personalizzato a ogni modello
+- Scegli un **colore** per ogni progetto (bordo colorato sulla card)
 - Logo della piattaforma di provenienza su ogni card (Printables, MakerWorld, ecc.)
 - Condivisione rapida del link del modello da ogni scheda
 - Tag personalizzati con suggerimenti dai tag già usati
@@ -34,7 +35,7 @@ App personale per salvare e organizzare modelli 3D da stampare. Pensata per **An
 ## Uso
 
 1. Tocca **+** per aggiungere un link
-2. Incolla l'URL, inserisci il **titolo** e opzionalmente i tag (scegli da quelli esistenti o scrivine di nuovi)
+2. Incolla l'URL, inserisci il **titolo**, scegli un **colore** e opzionalmente i tag (scegli da quelli esistenti o scrivine di nuovi)
 3. Il modello compare nella lista **Da stampare**
 4. Dopo la stampa, tocca **○ Da stampare** per segnarlo come stampato
 5. Usa i filtri e i tag per trovare ciò che cerchi

@@ -20,6 +20,7 @@ export function createProject(data) {
     title: data.title || 'Senza titolo',
     image: data.image || '',
     source: data.source || 'unknown',
+    color: data.color || '',
     tags: data.tags || [],
     printed: false,
     createdAt: Date.now(),
