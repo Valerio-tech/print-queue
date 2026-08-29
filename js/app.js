@@ -1,6 +1,6 @@
 import { loadProjects, saveProjects, createProject, exportData, importData } from './storage.js';
 import { parseTags, getAllTags, detectSource, getSourceIcon } from './metadata.js';
-import { COLOR_PALETTE, DEFAULT_COLOR, normalizeColor } from './color-picker.js';
+import { COLOR_PALETTE, DEFAULT_COLOR, normalizeColor, isGrayColumnIndex } from './color-picker.js';
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
@@ -111,8 +111,11 @@ function handleHeaderScroll() {
 
 function buildColorGrid() {
   els.colorGrid.innerHTML = COLOR_PALETTE.map(
-    (color) =>
-      `<button type="button" class="color-swatch${color === selectedColor ? ' selected' : ''}" data-color="${color}" style="background:${color}" aria-label="${color}" role="option" aria-selected="${color === selectedColor}"></button>`
+    (color, index) => {
+      const grayCol = isGrayColumnIndex(index) ? ' gray-col' : '';
+      const selected = color === selectedColor ? ' selected' : '';
+      return `<button type="button" class="color-swatch${grayCol}${selected}" data-color="${color}" style="background:${color}" aria-label="${color}" role="option" aria-selected="${color === selectedColor}"></button>`;
+    }
   ).join('');
 
   els.colorGrid.querySelectorAll('.color-swatch').forEach((btn) => {

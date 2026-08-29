@@ -19,6 +19,9 @@ function hslToHex(h, s, l) {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
 }
 
+// Left column: bianco → nero (top to bottom)
+const GRAY_COLUMN = ['#FFFFFF', '#B0B0B0', '#505050', '#000000'];
+
 // 12 fundamental hues: Rosso → Rosso-Viola
 const HUES = [0, 15, 30, 45, 55, 90, 120, 180, 220, 255, 280, 320];
 const LIGHTNESS = [80, 62, 46, 30];
@@ -26,19 +29,24 @@ const SATURATION = 90;
 
 function buildPalette() {
   const colors = [];
-  for (const lightness of LIGHTNESS) {
+  for (let row = 0; row < LIGHTNESS.length; row++) {
+    colors.push(GRAY_COLUMN[row]);
     for (const hue of HUES) {
-      colors.push(hslToHex(hue, SATURATION, lightness));
+      colors.push(hslToHex(hue, SATURATION, LIGHTNESS[row]));
     }
   }
   return colors;
 }
 
 export const COLOR_PALETTE = buildPalette();
-export const DEFAULT_COLOR = COLOR_PALETTE[0];
-export const PALETTE_COLUMNS = 12;
+export const PALETTE_COLUMNS = 13;
+export const DEFAULT_COLOR = COLOR_PALETTE[1];
 
 const HEX_RE = /^#[0-9A-F]{6}$/i;
+
+export function isGrayColumnIndex(index) {
+  return index % PALETTE_COLUMNS === 0;
+}
 
 export function isValidPaletteColor(color) {
   return typeof color === 'string' && HEX_RE.test(color) && COLOR_PALETTE.includes(color.toUpperCase());

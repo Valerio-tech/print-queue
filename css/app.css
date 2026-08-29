@@ -605,8 +605,13 @@ body {
 
 .color-grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(13, 1fr);
   gap: 3px;
+}
+
+.color-swatch.gray-col {
+  border-right: 2px solid rgba(255, 255, 255, 0.2);
+  margin-right: 2px;
 }
 
 .color-swatch {
