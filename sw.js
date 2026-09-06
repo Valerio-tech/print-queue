@@ -1,4 +1,4 @@
-const CACHE = 'print-queue-v9';
+const CACHE = 'print-queue-v10';
 const ASSETS = [
   './',
   './index.html',
@@ -8,6 +8,7 @@ const ASSETS = [
   './js/storage.js',
   './js/metadata.js',
   './js/color-picker.js',
+  './js/theme.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/sources/printables.png',
