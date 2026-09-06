@@ -17,9 +17,35 @@
   --primary-dark: #1557b0;
   --success: #34a853;
   --danger: #ea4335;
+  --on-primary: #fff;
+  --overlay-bg: rgba(0, 0, 0, 0.5);
+  --elevated-bg: rgba(15, 20, 25, 0.85);
+  --dropdown-shadow: rgba(0, 0, 0, 0.35);
+  --picker-bg: #1c1c1e;
+  --picker-preview-border: rgba(255, 255, 255, 0.15);
+  --picker-gray-divider: rgba(255, 255, 255, 0.2);
+  --switch-track: #3a4556;
+  --switch-thumb: #fff;
   --radius: 12px;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);
+}
+
+[data-theme='light'] {
+  --bg: #eef0f3;
+  --surface: #ffffff;
+  --surface-2: #e8eaed;
+  --border: #d0d5dd;
+  --text: #1f2937;
+  --text-muted: #6b7280;
+  --overlay-bg: rgba(0, 0, 0, 0.35);
+  --elevated-bg: rgba(255, 255, 255, 0.95);
+  --dropdown-shadow: rgba(0, 0, 0, 0.12);
+  --picker-bg: #e4e6ea;
+  --picker-preview-border: rgba(0, 0, 0, 0.12);
+  --picker-gray-divider: rgba(0, 0, 0, 0.18);
+  --switch-track: #c4c9d2;
+  --switch-thumb: #fff;
 }
 
 html {
@@ -150,7 +176,7 @@ body {
 .filter-btn.active {
   background: var(--primary);
   border-color: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
 }
 
 .tag-filter-wrap {
@@ -196,7 +222,7 @@ body {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 8px 24px var(--dropdown-shadow);
   max-height: 220px;
   overflow-y: auto;
 }
@@ -281,7 +307,7 @@ body {
   height: 34px;
   border: 1px solid var(--border);
   border-radius: 10px;
-  background: rgba(15, 20, 25, 0.85);
+  background: var(--elevated-bg);
   color: var(--text-muted);
   display: flex;
   align-items: center;
@@ -440,7 +466,7 @@ body {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--overlay-bg);
   z-index: 30;
   opacity: 0;
   pointer-events: none;
@@ -556,11 +582,64 @@ body {
   border: none;
   border-radius: var(--radius);
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   margin-top: 8px;
+}
+
+.theme-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.theme-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.theme-switch-track {
+  display: block;
+  width: 44px;
+  height: 26px;
+  background: var(--switch-track);
+  border-radius: 13px;
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+.theme-switch-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: var(--switch-thumb);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.theme-switch input:checked + .theme-switch-track {
+  background: var(--primary);
+}
+
+.theme-switch input:checked + .theme-switch-track .theme-switch-thumb {
+  transform: translateX(18px);
+}
+
+.theme-switch input:focus-visible + .theme-switch-track {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .btn-primary:disabled {
@@ -573,7 +652,7 @@ body {
 
 /* Color picker */
 .color-picker {
-  background: #1c1c1e;
+  background: var(--picker-bg);
   border-radius: 14px;
   padding: 12px;
   margin-top: 4px;
@@ -590,7 +669,7 @@ body {
   width: 44px;
   height: 44px;
   border-radius: 10px;
-  border: 2px solid rgba(255, 255, 255, 0.15);
+  border: 2px solid var(--picker-preview-border);
   flex-shrink: 0;
   background: #ffffff;
 }
@@ -610,7 +689,7 @@ body {
 }
 
 .color-swatch.gray-col {
-  border-right: 2px solid rgba(255, 255, 255, 0.2);
+  border-right: 2px solid var(--picker-gray-divider);
   margin-right: 2px;
 }
 
@@ -649,7 +728,7 @@ body {
   border: 1px solid var(--border);
   color: var(--text);
   font-size: 0.85rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 8px 24px var(--dropdown-shadow);
   max-width: calc(100vw - 32px);
   white-space: nowrap;
   overflow: hidden;

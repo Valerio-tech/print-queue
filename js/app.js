@@ -1,6 +1,7 @@
 import { loadProjects, saveProjects, createProject, exportData, importData } from './storage.js';
 import { parseTags, getAllTags, detectSource, getSourceIcon } from './metadata.js';
 import { COLOR_PALETTE, DEFAULT_COLOR, normalizeColor, isGrayColumnIndex } from './color-picker.js';
+import { initTheme, bindThemeToggle } from './theme.js';
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
@@ -45,6 +46,8 @@ const els = {
 };
 
 function init() {
+  initTheme();
+  bindThemeToggle('#theme-toggle');
   bindEvents();
   buildColorGrid();
   setSelectedColor(DEFAULT_COLOR);
