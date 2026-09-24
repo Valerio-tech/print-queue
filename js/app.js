@@ -1,6 +1,6 @@
 import { loadProjects, saveProjects, createProject, exportData, importData } from './storage.js';
 import { parseTags, getAllTags, detectSource, getSourceIcon } from './metadata.js';
-import { COLOR_PALETTE, DEFAULT_COLOR, normalizeColor, isGrayColumnIndex } from './color-picker.js';
+import { COLOR_PALETTE, DEFAULT_COLOR, normalizeColor, isGrayColumnIndex, COLOR_FILTER_OPTIONS, getColorFamily, getColorFilterLabel, getFamilySwatch } from './color-picker.js';
 import { initTheme, bindThemeToggle } from './theme.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -9,8 +9,10 @@ const $$ = (sel) => document.querySelectorAll(sel);
 let projects = loadProjects();
 let filter = 'todo';
 let activeTag = '';
+let activeColorFamily = '';
 let searchQuery = '';
 let tagFilterOpen = false;
+let colorFilterOpen = false;
 let tagSuggestionsOpen = false;
 let selectedColor = DEFAULT_COLOR;
 
@@ -21,10 +23,16 @@ const els = {
   countTodo: $('#count-todo'),
   countDone: $('#count-done'),
   tagFilterWrap: $('#tag-filter-wrap'),
+  secondaryFiltersWrap: $('#secondary-filters-wrap'),
   tagFilterBtn: $('#tag-filter-btn'),
   tagFilterLabel: $('#tag-filter-label'),
   tagFilterMenu: $('#tag-filter-menu'),
   tagFilterOptions: $('#tag-filter-options'),
+  colorFilterBtn: $('#color-filter-btn'),
+  colorFilterLabelText: $('#color-filter-label-text'),
+  colorFilterBtnSwatch: $('#color-filter-btn-swatch'),
+  colorFilterMenu: $('#color-filter-menu'),
+  colorFilterOptions: $('#color-filter-options'),
   search: $('#search-input'),
   addSheet: $('#add-sheet'),
   addForm: $('#add-form'),
@@ -94,9 +102,15 @@ function bindEvents() {
     toggleTagFilterMenu();
   });
 
+  els.colorFilterBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleColorFilterMenu();
+  });
+
   document.addEventListener('click', (e) => {
-    if (!els.tagFilterWrap.contains(e.target)) {
+    if (!els.secondaryFiltersWrap.contains(e.target)) {
       closeTagFilterMenu();
+      closeColorFilterMenu();
     }
   });
 
@@ -206,6 +220,10 @@ function getFiltered() {
     if (filter === 'todo' && p.printed) return false;
     if (filter === 'done' && !p.printed) return false;
     if (activeTag && !p.tags.includes(activeTag)) return false;
+    if (activeColorFamily) {
+      const family = getColorFamily(p.color);
+      if (family !== activeColorFamily) return false;
+    }
     if (searchQuery) {
       const hay = `${p.title} ${p.url} ${p.tags.join(' ')}`.toLowerCase();
       if (!hay.includes(searchQuery)) return false;
@@ -223,6 +241,7 @@ function render() {
   els.countDone.textContent = doneCount;
 
   renderTagFilterDropdown();
+  renderColorFilterDropdown();
   renderList(filtered);
 }
 
@@ -278,7 +297,9 @@ function appendTagToInput(tag) {
 }
 
 function toggleTagFilterMenu() {
-  tagFilterOpen = !tagFilterOpen;
+  const opening = !tagFilterOpen;
+  closeColorFilterMenu();
+  tagFilterOpen = opening;
   els.tagFilterMenu.classList.toggle('hidden', !tagFilterOpen);
   els.tagFilterBtn.setAttribute('aria-expanded', String(tagFilterOpen));
 }
@@ -289,22 +310,37 @@ function closeTagFilterMenu() {
   els.tagFilterBtn.setAttribute('aria-expanded', 'false');
 }
 
-function renderTagFilterDropdown() {
-  const tags = getAllTags(projects);
+function toggleColorFilterMenu() {
+  const opening = !colorFilterOpen;
+  closeTagFilterMenu();
+  colorFilterOpen = opening;
+  els.colorFilterMenu.classList.toggle('hidden', !colorFilterOpen);
+  els.colorFilterBtn.setAttribute('aria-expanded', String(colorFilterOpen));
+}
 
-  if (tags.length === 0) {
-    els.tagFilterWrap.classList.add('hidden');
+function closeColorFilterMenu() {
+  colorFilterOpen = false;
+  els.colorFilterMenu.classList.add('hidden');
+  els.colorFilterBtn.setAttribute('aria-expanded', 'false');
+}
+
+function updateSecondaryFiltersVisibility() {
+  const show = projects.length > 0;
+  els.secondaryFiltersWrap.classList.toggle('hidden', !show);
+  if (!show) {
     closeTagFilterMenu();
-    return;
+    closeColorFilterMenu();
   }
+}
 
-  els.tagFilterWrap.classList.remove('hidden');
+function renderTagFilterDropdown() {
+  updateSecondaryFiltersVisibility();
+  if (projects.length === 0) return;
+
   els.tagFilterLabel.textContent = activeTag || 'Tutti i tag';
 
-  const options = [
-    { tag: '', label: 'Tutti i tag' },
-    ...tags.map((tag) => ({ tag, label: tag })),
-  ];
+  const tags = getAllTags(projects);
+  const options = [{ tag: '', label: 'Tutti i tag' }, ...tags.map((tag) => ({ tag, label: tag }))];
 
   els.tagFilterOptions.innerHTML = options
     .map(
@@ -317,6 +353,35 @@ function renderTagFilterDropdown() {
     btn.addEventListener('click', () => {
       activeTag = btn.dataset.tag;
       closeTagFilterMenu();
+      render();
+    });
+  });
+}
+
+function renderColorFilterDropdown() {
+  if (projects.length === 0) return;
+
+  const label = getColorFilterLabel(activeColorFamily);
+  els.colorFilterLabelText.textContent = label;
+
+  if (activeColorFamily) {
+    els.colorFilterBtnSwatch.style.background = getFamilySwatch(activeColorFamily);
+    els.colorFilterBtnSwatch.classList.remove('hidden');
+  } else {
+    els.colorFilterBtnSwatch.classList.add('hidden');
+  }
+
+  els.colorFilterOptions.innerHTML = COLOR_FILTER_OPTIONS.map(({ id, label: optLabel, swatch }) => {
+    const swatchHtml = swatch
+      ? `<span class="color-filter-item-swatch" style="background:${swatch}" aria-hidden="true"></span>`
+      : '';
+    return `<button type="button" class="tag-dropdown-item color-filter-item ${activeColorFamily === id ? 'active' : ''}" data-color-family="${escapeAttr(id)}">${swatchHtml}<span>${escapeHtml(optLabel)}</span></button>`;
+  }).join('');
+
+  els.colorFilterOptions.querySelectorAll('[data-color-family]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      activeColorFamily = btn.dataset.colorFamily;
+      closeColorFilterMenu();
       render();
     });
   });

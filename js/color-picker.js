@@ -57,3 +57,75 @@ export function normalizeColor(color) {
   const upper = color.toUpperCase();
   return COLOR_PALETTE.includes(upper) ? upper : DEFAULT_COLOR;
 }
+
+const HUE_FAMILY_META = [
+  { id: 'red', label: 'Rosso' },
+  { id: 'red-orange', label: 'Rosso-Arancio' },
+  { id: 'orange', label: 'Arancione' },
+  { id: 'yellow-orange', label: 'Giallo-Arancio' },
+  { id: 'yellow', label: 'Giallo' },
+  { id: 'yellow-green', label: 'Giallo-Verde' },
+  { id: 'green', label: 'Verde' },
+  { id: 'cyan', label: 'Verde-Blu' },
+  { id: 'blue', label: 'Blu' },
+  { id: 'blue-violet', label: 'Blu-Viola' },
+  { id: 'violet', label: 'Viola' },
+  { id: 'red-violet', label: 'Rosso-Viola' },
+];
+
+function buildColorFamilies() {
+  const map = new Map();
+  map.set('white', [GRAY_COLUMN[0]]);
+  map.set('gray', [GRAY_COLUMN[1], GRAY_COLUMN[2]]);
+  map.set('black', [GRAY_COLUMN[3]]);
+
+  HUE_FAMILY_META.forEach((meta, colIndex) => {
+    const colors = [];
+    for (let row = 0; row < LIGHTNESS.length; row++) {
+      colors.push(COLOR_PALETTE[row * PALETTE_COLUMNS + 1 + colIndex]);
+    }
+    map.set(meta.id, colors);
+  });
+
+  const hexToFamily = new Map();
+  for (const [familyId, colors] of map) {
+    for (const hex of colors) {
+      hexToFamily.set(hex.toUpperCase(), familyId);
+    }
+  }
+
+  return { map, hexToFamily };
+}
+
+const { map: COLOR_FAMILIES, hexToFamily: HEX_TO_FAMILY } = buildColorFamilies();
+
+export function getColorFamily(color) {
+  if (!color || typeof color !== 'string') return null;
+  return HEX_TO_FAMILY.get(color.toUpperCase()) || null;
+}
+
+export function getFamilySwatch(familyId) {
+  if (familyId === 'white') return GRAY_COLUMN[0];
+  if (familyId === 'gray') return '#808080';
+  if (familyId === 'black') return GRAY_COLUMN[3];
+  const colors = COLOR_FAMILIES.get(familyId);
+  return colors ? colors[1] : '#808080';
+}
+
+export const COLOR_FILTER_OPTIONS = [
+  { id: '', label: 'Tutti i colori', swatch: null },
+  { id: 'white', label: 'Bianco', swatch: GRAY_COLUMN[0] },
+  { id: 'gray', label: 'Grigio', swatch: '#808080' },
+  { id: 'black', label: 'Nero', swatch: GRAY_COLUMN[3] },
+  ...HUE_FAMILY_META.map((meta) => ({
+    id: meta.id,
+    label: meta.label,
+    swatch: getFamilySwatch(meta.id),
+  })),
+];
+
+export function getColorFilterLabel(familyId) {
+  if (!familyId) return 'Tutti i colori';
+  const opt = COLOR_FILTER_OPTIONS.find((o) => o.id === familyId);
+  return opt ? opt.label : 'Tutti i colori';
+}

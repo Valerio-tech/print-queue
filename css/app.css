@@ -183,6 +183,57 @@ body {
   margin-top: 10px;
 }
 
+.secondary-filters-wrap {
+  margin-top: 10px;
+}
+
+.filter-dropdown-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.filter-dropdown-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.color-filter-label-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.color-filter-label-inner #color-filter-label-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.color-filter-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.color-filter-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.color-filter-item-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
 .tag-filter-btn {
   width: 100%;
   display: flex;
@@ -231,6 +282,14 @@ body {
   position: absolute;
   top: 100%;
   margin-top: 4px;
+}
+
+.filter-dropdown-col .tag-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  margin-top: 4px;
+  left: 0;
+  right: 0;
 }
 
 .tag-dropdown-divider {

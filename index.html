@@ -51,16 +51,32 @@
       <button class="filter-btn" data-filter="done">Stampati (<span id="count-done">0</span>)</button>
       <button class="filter-btn" data-filter="all">Tutti</button>
     </div>
-    <div id="tag-filter-wrap" class="tag-filter-wrap hidden">
-      <div class="tag-dropdown-wrap">
-        <button type="button" id="tag-filter-btn" class="tag-filter-btn" aria-haspopup="listbox" aria-expanded="false">
-          <span id="tag-filter-label">Tutti i tag</span>
-          <span class="tag-filter-chevron" aria-hidden="true">▼</span>
-        </button>
-        <div id="tag-filter-menu" class="tag-dropdown-menu hidden" role="listbox" aria-label="Filtra per tag">
-          <hr class="tag-dropdown-divider">
-          <div id="tag-filter-options" class="tag-dropdown-options"></div>
-          <hr class="tag-dropdown-divider">
+    <div id="secondary-filters-wrap" class="secondary-filters-wrap hidden">
+      <div class="filter-dropdown-row">
+        <div id="tag-filter-wrap" class="filter-dropdown-col tag-dropdown-wrap">
+          <button type="button" id="tag-filter-btn" class="tag-filter-btn" aria-haspopup="listbox" aria-expanded="false">
+            <span id="tag-filter-label">Tutti i tag</span>
+            <span class="tag-filter-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div id="tag-filter-menu" class="tag-dropdown-menu hidden" role="listbox" aria-label="Filtra per tag">
+            <hr class="tag-dropdown-divider">
+            <div id="tag-filter-options" class="tag-dropdown-options"></div>
+            <hr class="tag-dropdown-divider">
+          </div>
+        </div>
+        <div id="color-filter-wrap" class="filter-dropdown-col tag-dropdown-wrap">
+          <button type="button" id="color-filter-btn" class="tag-filter-btn" aria-haspopup="listbox" aria-expanded="false">
+            <span id="color-filter-label" class="color-filter-label-inner">
+              <span class="color-filter-swatch hidden" id="color-filter-btn-swatch" aria-hidden="true"></span>
+              <span id="color-filter-label-text">Tutti i colori</span>
+            </span>
+            <span class="tag-filter-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div id="color-filter-menu" class="tag-dropdown-menu hidden" role="listbox" aria-label="Filtra per colore">
+            <hr class="tag-dropdown-divider">
+            <div id="color-filter-options" class="tag-dropdown-options"></div>
+            <hr class="tag-dropdown-divider">
+          </div>
         </div>
       </div>
     </div>
