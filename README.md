@@ -12,7 +12,7 @@ App personale per salvare e organizzare modelli 3D da stampare. Pensata per **An
 - Condivisione rapida del link del modello da ogni scheda
 - Tag personalizzati con suggerimenti dai tag già usati
 - Segna come **stampato** o **da stampare**
-- Filtri per stato e tag, ricerca testuale
+- Filtri per stato, tag e **famiglia colore** (AND), ricerca testuale
 - Dati salvati sul dispositivo (localStorage)
 - Backup esportabile/importabile in JSON
 - Funziona offline dopo il primo caricamento
