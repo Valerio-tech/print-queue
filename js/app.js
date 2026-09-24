@@ -1,6 +1,6 @@
 import { loadProjects, saveProjects, createProject, exportData, importData } from './storage.js';
 import { parseTags, getAllTags, detectSource, getSourceIcon } from './metadata.js';
-import { COLOR_PALETTE, DEFAULT_COLOR, normalizeColor, isGrayColumnIndex, COLOR_FILTER_OPTIONS, getColorFamily, getColorFilterLabel, getFamilySwatch } from './color-picker.js';
+import { COLOR_PALETTE, DEFAULT_COLOR, normalizeColor, isGrayColumnIndex, COLOR_FILTER_OPTIONS, getColorFamily, getColorFilterLabel, getFamilySwatch, normalizeFilterFamilyId } from './color-picker.js';
 import { initTheme, bindThemeToggle } from './theme.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -221,8 +221,9 @@ function getFiltered() {
     if (filter === 'done' && !p.printed) return false;
     if (activeTag && !p.tags.includes(activeTag)) return false;
     if (activeColorFamily) {
+      const filterId = normalizeFilterFamilyId(activeColorFamily);
       const family = getColorFamily(p.color);
-      if (family !== activeColorFamily) return false;
+      if (family !== filterId) return false;
     }
     if (searchQuery) {
       const hay = `${p.title} ${p.url} ${p.tags.join(' ')}`.toLowerCase();
@@ -361,11 +362,13 @@ function renderTagFilterDropdown() {
 function renderColorFilterDropdown() {
   if (projects.length === 0) return;
 
+  activeColorFamily = normalizeFilterFamilyId(activeColorFamily);
+
   const label = getColorFilterLabel(activeColorFamily);
   els.colorFilterLabelText.textContent = label;
 
   if (activeColorFamily) {
-    els.colorFilterBtnSwatch.style.background = getFamilySwatch(activeColorFamily);
+    els.colorFilterBtnSwatch.style.background = getFamilySwatch(normalizeFilterFamilyId(activeColorFamily));
     els.colorFilterBtnSwatch.classList.remove('hidden');
   } else {
     els.colorFilterBtnSwatch.classList.add('hidden');
@@ -375,7 +378,7 @@ function renderColorFilterDropdown() {
     const swatchHtml = swatch
       ? `<span class="color-filter-item-swatch" style="background:${swatch}" aria-hidden="true"></span>`
       : '';
-    return `<button type="button" class="tag-dropdown-item color-filter-item ${activeColorFamily === id ? 'active' : ''}" data-color-family="${escapeAttr(id)}">${swatchHtml}<span>${escapeHtml(optLabel)}</span></button>`;
+    return `<button type="button" class="tag-dropdown-item color-filter-item ${normalizeFilterFamilyId(activeColorFamily) === id ? 'active' : ''}" data-color-family="${escapeAttr(id)}">${swatchHtml}<span>${escapeHtml(optLabel)}</span></button>`;
   }).join('');
 
   els.colorFilterOptions.querySelectorAll('[data-color-family]').forEach((btn) => {
