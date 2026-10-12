@@ -1,8 +1,10 @@
 {
+  "id": "/print-queue/",
   "name": "Print Queue",
   "short_name": "PrintQueue",
   "description": "Lista personale di modelli 3D da stampare",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0f1419",
   "theme_color": "#1a73e8",
@@ -21,5 +23,15 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
 }

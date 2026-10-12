@@ -61,6 +61,10 @@ function init() {
   setSelectedColor(DEFAULT_COLOR);
   render();
   registerServiceWorker();
+  const shared = consumeIncomingShare();
+  if (shared.url) {
+    openAddSheet({ url: shared.url, title: shared.title });
+  }
 }
 
 function bindEvents() {
@@ -153,18 +157,53 @@ function setSelectedColor(color) {
   });
 }
 
-function openAddSheet() {
+function openAddSheet(prefill = null) {
   els.addSheet.classList.add('open');
   els.overlay.classList.add('visible');
-  els.urlInput.value = '';
-  els.titleInput.value = '';
+  const url = prefill?.url?.trim() || '';
+  const title = prefill?.title?.trim() || '';
+  els.urlInput.value = url;
+  els.titleInput.value = title;
   els.tagsInput.value = '';
   setSelectedColor(DEFAULT_COLOR);
   els.addStatus.textContent = '';
   els.addStatus.className = 'add-status';
   els.tagSuggestions.classList.add('hidden');
   tagSuggestionsOpen = false;
-  setTimeout(() => els.urlInput.focus(), 300);
+  setTimeout(() => {
+    if (url && !title) els.titleInput.focus();
+    else if (!url) els.urlInput.focus();
+    else els.titleInput.focus();
+  }, 300);
+}
+
+/** Web Share Target: link condiviso da altre app (Android PWA). */
+function consumeIncomingShare() {
+  const params = new URLSearchParams(window.location.search);
+  const hasShare =
+    params.has('url') || params.has('text') || params.has('title');
+  if (!hasShare) return { url: '', title: '' };
+
+  const rawUrl = (params.get('url') || '').trim();
+  const text = (params.get('text') || '').trim();
+  const rawTitle = (params.get('title') || '').trim();
+
+  let url = rawUrl;
+  if (!url && text) {
+    const match = text.match(/https?:\/\/[^\s<>"']+/i);
+    if (match) url = match[0].replace(/[.,;:!?)]+$/, '');
+  }
+
+  let title = rawTitle;
+  if (!title && text && url) {
+    title = text.replace(url, '').trim().replace(/^[-–—|•]\s*/, '');
+  }
+  if (title.length > 200) title = title.slice(0, 200);
+
+  const clean = `${window.location.pathname}${window.location.hash || ''}`;
+  window.history.replaceState({}, '', clean);
+
+  return { url, title };
 }
 
 function closeAddSheet() {

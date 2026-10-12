@@ -10,6 +10,7 @@ App personale per salvare e organizzare modelli 3D da stampare. Pensata per **An
 - **Tema chiaro / scuro** con switch in header (preferenza salvata sul dispositivo)
 - Logo della piattaforma di provenienza su ogni card (Printables, MakerWorld, ecc.)
 - Condivisione rapida del link del modello da ogni scheda
+- **Ricevi link** da altre app (Condividi → Print Queue): apre «Nuovo modello» con URL già compilato (PWA installata su Android)
 - Tag personalizzati con suggerimenti dai tag già usati
 - Segna come **stampato** o **da stampare**
 - Filtri per stato, tag e **famiglia colore** (AND), ricerca testuale
@@ -26,6 +27,8 @@ App personale per salvare e organizzare modelli 3D da stampare. Pensata per **An
 3. Attendi il deploy (1–2 minuti)
 4. Apri l'URL generato (es. `https://tuonome.github.io/print-queue/`) in Chrome
 5. Menu ⋮ → **Aggiungi a schermata Home** / **Installa app**
+
+Per comparire nel foglio **Condividi** di Android, l’app deve essere installata così. Dopo un aggiornamento che aggiunge questa funzione, se Print Queue non compare in Condividi: rimuovi l’icona dalla home e reinstalla la PWA.
 
 ### Opzione B — File locale
 
